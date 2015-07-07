@@ -9,7 +9,7 @@
   <meta name="author" content="Artsy">
 
   
-  <meta name="description" content="At Artsy we&#8217;ve been building Node.js applications that share code and rendering between the server and browser. We&#8217;ve seen many benefits &hellip;">
+  <meta name="description" content="To a beginner, OCMock looks scary. The syntax is strange, the idea of stubbing seems complicated, and skirting around the need to use it at all times &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -23,11 +23,27 @@
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script src="/javascripts/octopress.js"></script>
+  <script src="/javascripts/underscore-min.js"></script>
+  <script src="/javascripts/jquery-1.11.3.min.js"> </script>
+  <script src="/javascripts/jquery.scrollTo.min.js"></script>
+  <script src="/javascripts/backbone-min.js"></script>
+  <script src="/javascripts/moment.js"></script>
+  <script src="/javascripts/noframework.waypoints.min.js"></script>
+  <script src="/javascripts/gradient_fade.js"></script>
+  <script src="/javascripts/sticky.min.js"></script>
+  <script type="text/javascript" src="http://fast.fonts.net/jsapi/f7f47a40-b25b-44ee-9f9c-cfdfc8bb2741.js"></script>
+  
   <link href="/atom.xml" rel="alternate" title="Artsy Engineering" type="application/atom+xml">
   <!--[if IE 8]>
 <link href="/stylesheets/custom/ie_font.css" type="text/css">
 <![endif]-->
+
+<!--- MathJax Configuration -->
+<script type="text/javascript"
+src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -46,590 +62,644 @@
 
 
 <body>
-  
-  <a href="/">
-    <h1 id="lrg-mark">
-      <span>Artsy</span>
-    </h1>
-  </a>
-  
-  <header id="banner"><hgroup>
-  <div id="header">
-    <h2>Inspiration from the engineering team at <a href="http://artsy.net">Artsy</a> — A new way to discover fine art.</h2>
-  </div>
-</hgroup>
-
-</header>
-  
-  <div id="main">
-    <div id="mobile_search">
-      <form action="http://google.com/search" method="get">
-        <input type="hidden" name="q" value="site:artsy.github.io" />
-        <input class="search" type="text" name="q" results="0" placeholder="Search" />
-      </form>
+  <div id="logo-container">
+    <div id="lrg-mark">
+      <a href="https://www.artsy.net/"><img src="/images/fixed_logo.png"></a>
     </div>
+  </div>
+  <header id="banner"><div id="header">
+  <div class="header-navigation">
+    <ul>
+      <li><a href="https://developers.artsy.net/">API</a></li>
+      <li><a href="https://www.artsy.net/jobs">Careers</a></li>
+      <li><a href="http://twitter.com/artsyopensource">@artsyopensource</a></li>
+      <li><a href="http://www.artsy.net/">Artsy.net</a></li>
+    </ul>
+    <span class="header-section-title">
+      
+        <a href="http://artsy.github.io/open-source">Open Source</a>
+      
+    </span>
+  </div>
+
+  <div class="header-sticky-container">
+    <div class="header-logo">
+      <h2><a href="http://artsy.github.io">Artsy</a></h2>
+    </div>
+    <div class="header-search">
+      
+        <h2>Engineering Blog</h2>
+        <span>
+  <form action="/search" method="get">
+    <input type="hidden" value="010245880960712892902:tnjd4ryb3ci" name="cx"/>
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </form>
+
+</span>
+      
+    </div>
+  </div>
+</div>
+</header>
+  <div class="header-hamburger">
+    <button class="cmn-toggle-switch cmn-toggle-switch__htx">
+      <span>toggle menu</span>
+    </button>
+  </div>
+  <div id="main">
     <div id="content">
+
       <div class="blog-index">
   
   
-  
-    <article>
-      
-  <header>
     
-    <a href="/blog/2013/11/30/rendering-on-the-server-and-client-in-node-dot-js/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2013-11-30T22:38:00+00:00" pubdate>11/30/13</time></div>
-    
-    
-      <h1 class="entry-title">Rendering on the Server and Client in Node.js</h1>
-
-    
-    </a>
-    
-      <p class="meta">
+      <article>
         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="/images/2013-12-18-rendering-on-the-server-and-client-in-node-dot-js/isomorphic.png" alt="Diagram of Shared Server/Client Architecture" /></p>
-
-<p>At Artsy we&#8217;ve been building <a href="http://nodejs.org/">Node.js</a> applications that share code and rendering between the server and browser. We&#8217;ve seen many benefits from this &#8211; pages load faster, we can optimize SEO, developers are more productive, and JavaScript coding is just an overall better experience.</p>
-
-<p>Today we&#8217;re happy to announce <a href="http://ezeljs.com/">Ezel</a>, our open source boilerplate we use to bootstrap our Node projects and the <a href="https://github.com/artsy/benv">various</a> <a href="https://github.com/artsy/backbone-super-sync">node</a> <a href="https://github.com/artsy/sharify">modules</a> that built up to it.</p>
-
-<p>In his article, <a href="http://nerds.airbnb.com/isomorphic-JavaScript-future-web-apps/"><em>Isomorphic JavaScript: The Future of Web Apps</em></a>, Spike Brehm from AirBnB describes this growing trend well and we&#8217;re excited to be a part of it. In this article I&#8217;ll tell Artsy&#8217;s story of moving from a single monolithic application to modular <a href="http://backbonejs.org/">Backbone</a> apps that run in Node and the browser and consume our external API.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/11/30/rendering-on-the-server-and-client-in-node-dot-js/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-    <a href="/blog/2013/11/07/upgrading-to-mongoid4/">
-      <div class="date">
-
-
-
+<div class="article-container">
 
   
-<time datetime="2013-11-07T12:34:00+00:00" pubdate>11/07/13</time></div>
-    
-    
-      <h1 class="entry-title">Upgrading to Mongoid 4.x</h1>
-
-    
-    </a>
-    
-      <p class="meta">
+    <div class="meta-container">
+      <header>
         
-      </p>
+          <a href="/blog/2015/07/06/how-to-write-unit-tests-like-a-brood-parasite/">
+        
+        
+          <h2 class="entry-title">How to Write Unit Tests Like a Brood Parasite</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
     
-  </header>
-
-
-  <div class="entry-content"><p>I recently went through an exercise of upgrading one of Artsy&#8217;s largest web projects to the current HEAD of Mongoid 4.x. This is going to be a major release with numerous changes and I wanted to flush out bugs before the final version of the ODM is released. All Mongoid changes currently live on <a href="https://github.com/mongoid/mongoid">master</a>.</p>
+      <div class="entry-content"><p>To a beginner, <a href="http://ocmock.org/">OCMock</a> looks scary. The syntax is strange, the idea of stubbing seems complicated, and skirting around the need to use it at all times kind of works out for a while.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">gem</span> <span class="s1">&#39;mongoid&#39;</span><span class="p">,</span> <span class="ss">github</span><span class="p">:</span> <span class="s1">&#39;mongoid/mongoid&#39;</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='objc'><span class='line'><span class="p">[[[</span><span class="n">mock</span> <span class="n">stub</span><span class="p">]</span> <span class="c1">// three brackets!!</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">[</span><span class="n">OCMockObject</span> <span class="n">niceMockForClass</span><span class="o">:</span><span class="n">UINavigationItem</span><span class="p">.</span><span class="n">class</span><span class="p">];</span> <span class="c1">// it has to be told to be nice?</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>In the process I&#8217;ve worked on making a few gems compatible with Mongoid 4 and learned a couple of things that should help you make this process smooth for your own applications.</p>
+<p>All of this can be overwhelming for someone who just wants to write simple unit tests for a particular view controller.</p>
+
+<p>Once you look into the specifics of OCMock, however, things get less terrifying really quickly. It is helpful to compare OCMock’s approach to stubbing to the <a href="https://vimeo.com/60553870">behaviors of certain bird species</a>. As always, the soothing voice of David Attenborough brings clarity and joy to even the most mundane puzzles of life’s journey.</p>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/11/07/upgrading-to-mongoid4/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-    <a href="/blog/2013/08/27/introduction-to-aws-opsworks/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2013-08-27T12:31:00+01:00" pubdate>08/27/13</time></div>
-    
-    
-      <h1 class="entry-title">Introduction to AWS OpsWorks</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>OpsWorks is a new service from Amazon that promises to provide high-level tools to manage your EC2-based deployment. From <a href="http://aws.typepad.com/aws/2013/02/aws-opsworks-flexible-application-management-in-the-cloud.html">the announcement</a>:</p>
-
-<blockquote><p>AWS OpsWorks features an integrated management experience for the entire application lifecycle including resource provisioning, configuration management, application deployment, monitoring, and access control. It will work with applications of any level of complexity and is independent of any particular architectural pattern.</p></blockquote>
-
-<p>After scratching our heads about exactly what that meant, we tried it anyway. If you&#8217;ve been straining at the limits of your Platform as a Service (PaaS) provider, or just wishing for more automation for your EC2 deployment, you may want to try it out too.</p>
-
-<p>Artsy has been experimenting with OpsWorks for a few months now and recently adopted it for the production <a href="http://artsy.net">artsy.net</a> site. We&#8217;re excited to share what we&#8217;ve learned in the process.</p>
-
-<p><img class="screenshot" src="/images/2013-08-27-introduction-to-aws-opsworks/opsworks.png" title="[OpsWorks overview]" ></p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/08/27/introduction-to-aws-opsworks/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-    <a href="/blog/2013/06/23/normalizing-gmail-email-addresses-with-canonical-emails/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2013-06-23T12:21:00+01:00" pubdate>06/23/13</time></div>
-    
-    
-      <h1 class="entry-title">Normalizing GMail E-Mail Addresses With CanonicalEmails</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>A whopping 49% of Artsy users have &#8220;gmail.com&#8221; email addresses. The next domain name, &#8220;hotmail.com&#8221;, doesn&#8217;t even come close, with only 6%.</p>
-
-<p><img src="/images/2013-06-23-normalizing-gmail-email-addresses-with-canonical-emails/artsy-email-domains.png" /></p>
-
-<p>GMail addresses ignore periods and are case-insensitive. For example, &#8220;Donald.Duck@gmail.com&#8221; and &#8220;donaldduck@gmail.com&#8221; are the same account. You can log-in to GMail with both. Users often register with the former and try to log-in to Artsy with the latter. With so many GMail users, expect a dozen support emails per day.</p>
-
-<p>The solution is to normalize these emails into a canonical form.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/06/23/normalizing-gmail-email-addresses-with-canonical-emails/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+        <footer>
+          <a rel="full-article" href="/blog/2015/07/06/how-to-write-unit-tests-like-a-brood-parasite/">Read More</a>
+        </footer>
       
-  <header>
     
-    <a href="/blog/2013/06/21/adding-api-documentation-with-grape-swagger/">
-      <div class="date">
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
 
 
 
 
   
-<time datetime="2013-06-21T12:21:00+01:00" pubdate>06/21/13</time></div>
-    
-    
-      <h1 class="entry-title">Adding API Docs With Grape and Swagger</h1>
+<time datetime="2015-07-06T13:54:00+01:00" pubdate>Jul. 6<span>th</span>, 2015</time></div>
+  </div>
 
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The Artsy website, Partner CMS, mobile tools, and all our hackathon experiments are built on top of a core API. We&#8217;ve put a lot of effort into documenting it internally. But developers don&#8217;t want to have to grok through code. With <a href="https://github.com/intridea/grape">Grape</a> and <a href="https://developers.helloreverb.com/swagger">Swagger</a>, adding an API explorer and exposing the API documentation has never been easier.</p>
-
-<p><img src="/images/2013-06-21-adding-api-documentation-with-grape-swagger/swagger-ui.png" /></p>
+  <footer>
+  </footer>
 
 </div>
+
+      </article>
   
+    
+      <article>
+        
+<div class="article-container">
+
   
-    <footer>
-      <a rel="full-article" href="/blog/2013/06/21/adding-api-documentation-with-grape-swagger/">Read on &rarr;</a>
-    </footer>
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2015/06/04/an-eigenstate-of-mind/">
+        
+        
+          <h2 class="entry-title">An Eigenstate of Mind</h2>
+        
+          </a>
+      </header>
+    </div>
   
 
+  <div class="content-container">
+    
+      <div class="entry-content"><p>Prior to starting at Artsy, I followed a few online tutorials on iOS development. But a simple application demonstrating how to <a href="http://www.raywenderlich.com/85578/first-core-data-app-using-swift">build a todo list</a> didn&#8217;t illustrate the nuances of a production codebase. Tutorials are an important learning tool for beginners, but can&#8217;t possibly prepare you for everything you would encounter within an application like Artsy&#8217;s.</p>
 
-    </article>
-  
-  
-    <article>
+<p>I was lucky to have a mentor at Artsy to help me get started, and I wrote this post to pass along the lessons I learned. This is meant to be a guide for iOS beginners to get to know an open source production codebase. I&#8217;ll cover the Xcode project organization and where to find things.</p>
+
+</div>
       
-  <header>
-    
-    <a href="/blog/2013/06/14/writing-headless-backbone-tests-with-node-dot-js/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2013-06-14T17:48:00+01:00" pubdate>06/14/13</time></div>
-    
-    
-      <h1 class="entry-title">Writing Headless Backbone Tests With Node.js</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>TL;DR</h2>
-
-<p>Write fast, headless, tests for Backbone using Node.js. See this project as an example  <a href="https://github.com/craigspaeth/backbone-headless-testing">https://github.com/craigspaeth/backbone-headless-testing</a>.</p>
-
-<h2>A Brief History</h2>
-
-<p>Artsy is mostly a thick client <a href="http://backbonejs.org/">Backbone</a> app that sits on <a href="http://rubyonrails.org/">Rails</a> and largely depends on <a href="http://jnicklas.github.io/capybara/">Capybara</a> (<a href="http://docs.seleniumhq.org/">Selenium</a> backed bot that clicks around Firefox) for testing it&#8217;s javascript. This leads to some seriously brittle and slow integration tests. <a href="http://artsy.github.io/blog/2012/02/03/reliably-testing-asynchronous-ui-w-slash-rspec-and-capybara/">Despite being able to wrangle Capybara</a> to do most of our client-side testing, we knew there must be a better way.</p>
-
-<p>When building a CMS app for our gallery partners to manage their Artsy inventory, we built a new Backbone app on top of <a href="http://nodejs.org/">node.js</a>. The result was a headless test suite that runs around 60 times faster.</p>
-
-<p>Let&#8217;s take a look at how it&#8217;s done.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/06/14/writing-headless-backbone-tests-with-node-dot-js/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-    <a href="/blog/2013/04/13/bootstrapping-json-data-with-rails-and-backbone-js/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2013-04-13T12:21:00+01:00" pubdate>04/13/13</time></div>
-    
-    
-      <h1 class="entry-title">Bootstrapping JSON Data With Rails and Backbone.js</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The <a href="http://artsy.net">artsy.net website</a> is a Backbone.js application that talks to a server-side RESTful Grape API sitting on top of a Rails app which serves minimal HTML markup. The latter includes such things as a page title, along with links to JavaScript and stylesheet packages. A page loads, scripts run, data is fetched from the API. The result is merged into a HAMLJS template and rendered client-side.</p>
-
-<p>Building this kind of one-page apps allows for clean separation between the presentation and API layers. The downside is that it will slow page render times - fetching data after page load means waiting for an AJAX request to complete before displaying anything.</p>
-
-<p>There&#8217;re many solutions to this problem, all involving some kind of server-side rendering. You could, for example, share views and JavaScript between client and server. This would be a major paradigm shift for a large application like ours and not something we could possibly maneuver in a short amount of time.</p>
-
-<p>Without changing the entire architecture of the system, how can we bootstrap JSON data server-side and avoid the data roundtrip on every page load?</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/04/13/bootstrapping-json-data-with-rails-and-backbone-js/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+        <footer>
+          <a rel="full-article" href="/blog/2015/06/04/an-eigenstate-of-mind/">Read More</a>
+        </footer>
       
-  <header>
     
-    <a href="/blog/2013/04/10/aranalytics/">
-      <div class="date">
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
 
 
 
 
   
-<time datetime="2013-04-10T17:23:00+01:00" pubdate>04/10/13</time></div>
-    
-    
-      <h1 class="entry-title">ARAnalytics - Analytics for iOS Apps</h1>
+<time datetime="2015-06-04T18:00:00+01:00" pubdate>Jun. 4<span>th</span>, 2015</time></div>
+  </div>
 
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>In both my <a href="http://orta.github.com">personal apps</a> and Artsy Folio, I&#8217;m always after a deeper understanding of how people use the app. There&#8217;s three ways to do this: ask users, watch users and track usage. I&#8217;d like to talk about the third of these.</p>
-
-<p>We&#8217;ve experimented with quite a lot of analytics tools for the Artsy website, and it seemed fitting to do the same for our mobile app. We wanted the freedom to change the analytics tool without having to change the code, and so <a href="http://github.com/orta/ARAnalytics">ARAnalytics</a> was born.</p>
+  <footer>
+  </footer>
 
 </div>
+
+      </article>
   
+    
+      <article>
+        
+<div class="article-container">
+
   
-    <footer>
-      <a rel="full-article" href="/blog/2013/04/10/aranalytics/">Read on &rarr;</a>
-    </footer>
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2015/04/28/how-we-open-sourced-eigen/">
+        
+        
+          <h2 class="entry-title">How We Open Source&#8217;d Eigen</h2>
+        
+          </a>
+      </header>
+    </div>
   
 
+  <div class="content-container">
+    
+      <div class="entry-content"><p>It was 95 days ago, and I was sitting before of my computer in NYC. I loaded my terminal, opened <a href="https://taptalk.me">TapTalk</a> on my phone, tapped on my collegue <a href="http://ashfurrow.com">Ash&#8217;s</a> avatar and held my finger there. I paused, this moment was a long time, it was worth waiting. I switched the camera from my face to the screen with the terminal open.</p>
 
-    </article>
-  
-  
-    <article>
+<p>This moment was probably the most nervous I had been in years. It showed <code>git push origin master</code>. I said &#8220;it&#8217;s happening.&#8221; I hit return. A new era in the Artsy mobile team had started. A few minutes later, I wrote this tweet:</p>
+
+<center>
+<blockquote class="twitter-tweet" data-cards="hidden" lang="en"><p>We have open source’d the <a href="https://twitter.com/artsy">@Artsy</a> iOS app.&#10;&#10;<a href="https://t.co/c1SWtHmUgy">https://t.co/c1SWtHmUgy</a>&#10;&#10;🎉</p>&mdash; Ørta (@orta) <a href="https://twitter.com/orta/status/558395611754819586">January 22, 2015</a></blockquote>
+</center>
+
+
+<p>Let&#8217;s go over the process we went through to get to that point.</p>
+
+</div>
       
-  <header>
-    
-    <a href="/blog/2013/04/01/an-easter-egg-for-curl/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2013-04-01T12:21:00+01:00" pubdate>04/01/13</time></div>
-    
-    
-      <h1 class="entry-title">An Easter Egg for Curl</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Let&#8217;s implement an Easter egg that requires <a href="http://curl.haxx.se/">curl</a> and is HTTP-compliant.</p>
-
-<p>We accept access tokens on our API endpoints. These can come from an <code>access_token</code> query string parameter.</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>curl http://artsy.net/api/v1/system/up?access_token=invalid -v
-</span><span class='line'>
-</span><span class='line'>&lt; HTTP/1.1 401 Unauthorized
-</span><span class='line'>&lt; Content-Type: application/json
-</span><span class='line'>&lt; Content-Length: 24
-</span><span class='line'>
-</span><span class='line'>{ "error" : "Unauthorized" }</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So far, so good. Now try this:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>curl http://artsy.net/api/v1/system/up?access_token=10013 -v
-</span><span class='line'>
-</span><span class='line'>&lt; HTTP/1.1 401 Broadway
-</span><span class='line'>&lt; Content-Type: application/json
-</span><span class='line'>&lt; Content-Length: 76
-</span><span class='line'>
-</span><span class='line'>{ "error" : "Inspiration from the Engineering team at http://artsy.github.com" }</span></code></pre></td></tr></table></div></figure>
-
-
-<p>What?! <strong>401 Broadway</strong>? See, our office address is <em>401 Broadway, 10013, New York, NY</em>. We just tried to add a more developer-friendly way to find us in the New York grid. And here&#8217;s the view from our 25th floor office - that&#8217;s SOHO right below us and the Empire State Building a bit North.</p>
-
-<p><img src="/images/2013-04-01-an-easter-egg-for-curl/artsy-office-view.jpg" /></p>
-
-<p>Photo by <a href="https://github.com/zamiang">@zamiang</a>.</p>
-
-<p>Easter egg implementation follows.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/04/01/an-easter-egg-for-curl/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
+        <footer>
+          <a rel="full-article" href="/blog/2015/04/28/how-we-open-sourced-eigen/">Read More</a>
+        </footer>
+      
     
-    <a href="/blog/2013/03/29/musical-chairs/">
-      <div class="date">
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
 
 
 
 
   
-<time datetime="2013-03-29T16:38:00+00:00" pubdate>03/29/13</time></div>
-    
-    
-      <h1 class="entry-title">Musical Chairs</h1>
+<time datetime="2015-04-28T00:00:00+01:00" pubdate>Apr. 28<span>th</span>, 2015</time></div>
+  </div>
 
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p> At Artsy we make Artsy Folio. Folio is an awesome portfolio app that shows our gallery and museum partners their artworks in one place, allows them to easily get information about their inventory and to send works by email to their contacts.</p>
-
-<p>Folio has to deal with large multi-gigabyte syncs in order to operate offline. That makes for a great user experience, but for the developer working on the sync, it&#8217;s not as pleasant. Combined with our use of Core Data, the app’s maturity, and dealing with data store migrations, things can get hairy. We needed a tool that could freeze and restore app data at will, obviating the need for constant syncing and resyncing.</p>
-
-<p>That&#8217;s why I built <a href="https://github.com/orta/chairs">chairs</a>&#8230;</p>
+  <footer>
+  </footer>
 
 </div>
+
+      </article>
   
+    
+      <article>
+        
+<div class="article-container">
+
   
-    <footer>
-      <a rel="full-article" href="/blog/2013/03/29/musical-chairs/">Read on &rarr;</a>
-    </footer>
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2015/04/09/so-you-want-an-ssl-certificate/">
+        
+        
+          <h2 class="entry-title">So You Want an SSL Certificate? A Pragmatic Handbook</h2>
+        
+          </a>
+      </header>
+    </div>
   
 
+  <div class="content-container">
+    
+      <div class="entry-content"><p>Obtaining, reissuing and installing SSL certificates across various pieces of Artsy infrastructure (read about our tech stack <a href="/blog/2015/03/23/artsy-technology-stack-2015/">here</a>) is a mind-numbing excercise dreaded by every platform engineer. Few people really understand what&#8217;s going on, installing SSL certificates is right up there in the opaque world of user-unfriendliness, along with onboarding a new iOS developer in an organization with Xcode.</p>
 
-    </article>
+<p>Still, it can be done - below is our cookbook.</p>
+
+<p><img src='/images/2015-04-09-so-you-want-an-ssl-certificate/ev.png'>
+<img src='/images/2015-04-09-so-you-want-an-ssl-certificate/cert.png'></p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2015/04/09/so-you-want-an-ssl-certificate/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2015-04-09T00:00:00+01:00" pubdate>Apr. 9<span>th</span>, 2015</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2015/04/08/creating-a-dynamic-single-page-app-for-our-genome-team-using-react/">
+        
+        
+          <h2 class="entry-title">Trying Out React</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p>We recently picked up a Rails application that was a few features away from completion. This application allows our <a href="https://www.artsy.net/about/the-art-genome-project">Genome Team</a> to classify multiple artworks based on visual and art historical characteristics. These characteristics, or &#8220;genes&#8221;, can be added, removed, and changed for any of the artworks on the panel.</p>
+
+<center><img src='/images/2015-04-08-creating-a-dynamic-single-page-app-for-our-genome-team-using-react/helix_screenshot.png'></center>
+
+
+<p>Our genomers are masters of efficiency, and over the years we have worked closely with them to tailor a dynamic interface to their specific workflow.</p>
+
+<p>When we started working on the app, the back-end was organized, modular, and interfaced seamlessly with the Artsy API, but there were still a few front-end features we needed to implement before it could be used by the Genome Team. The app did not use a front-end framework, and as our features scaled it was difficult to keep track of UI state with pure CoffeeScript and global event listeners. Eventually, we decided to stop trying to patch our leaky roof and build a new one.</p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2015/04/08/creating-a-dynamic-single-page-app-for-our-genome-team-using-react/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2015-04-08T11:30:00+01:00" pubdate>Apr. 8<span>th</span>, 2015</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2015/04/03/artsy-engineering-compensation-framework/">
+        
+        
+          <h2 class="entry-title">Artsy&#8217;s Engineering Compensation Framework</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p>Fair compensation is an important part of cultivating and growing engineers, and determining how much money someone is going to make is often more art than science, especially in young start-ups. We wanted this to be a collaborative process and not an adversarial one, and as our engineering team grew past 20 members it became important to think about compensation more systematically.</p>
+
+<p>In this post I will share our individual contributor engineering ladder and our performance evaluation and compensation process.</p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2015/04/03/artsy-engineering-compensation-framework/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2015-04-03T00:00:00+01:00" pubdate>Apr. 3<span>rd</span>, 2015</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2015/03/31/the-culture-of-openness-artsy-mobile/">
+        
+        
+          <h2 class="entry-title">The Culture of Openness in the Artsy Mobile Team</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p>Recently, the Artsy Mobile team had the pleasure of working together on <a href="http://www.objc.io/issue-22/artsy.html">an article</a> for <a href="http://www.objc.io">objc.io</a>, an online publication dedicated to in-depth articles about iOS and OS X development. Each monthly issue consists of several articles centered around a theme—past issues include <a href="http://www.objc.io/issue-15/">Testing</a>, <a href="http://www.objc.io/issue-12/">Animations</a> and <a href="http://www.objc.io/issue-16/">Swift</a>. objc.io’s latest issue, <a href="http://www.objc.io/issue-22">iOS at Scale</a>, features articles by a handful of developers about how they approach iOS development at their respective companies. Our contribution to the issue is a collaboratively-written article by and about Artsy’s Mobile team from the angle of Artsy&#8217;s focus on the core value of openness that is foundational to how we (and the greater Artsy team) work.</p>
+
+<p>As our article puts it:</p>
+
+<blockquote><p>Our team intrinsically believes in the ideas of open source. Though our individual motivations vary — from a conviction in the power of education to a determination to help others see from giants’ shoulders — we all maintain the value of open source.</p></blockquote>
+
+<p>iOS at Artsy is characterized by a culture of open source stewardship. Although our team is small, our contributions to the Cocoa developer community are significant. We hope our article sheds some light on our development and testing practices while also providing a high-level look into our team’s philosophy. If you’d like to learn more, feel free to reach out to us at <a href="&#109;&#x61;&#105;&#x6c;&#116;&#111;&#58;&#109;&#111;&#98;&#x69;&#108;&#101;&#x40;&#97;&#114;&#x74;&#x73;&#x79;&#x2e;&#110;&#101;&#116;">&#109;&#x6f;&#x62;&#105;&#x6c;&#101;&#x40;&#97;&#114;&#116;&#115;&#121;&#46;&#x6e;&#101;&#x74;</a> or <a href="https://twitter.com/artsyopensource">@ArtsyOpenSource</a>.</p>
+</div>
+      
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2015-03-31T19:07:00+01:00" pubdate>Mar. 31<span>st</span>, 2015</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2015/03/23/artsy-technology-stack-2015/">
+        
+        
+          <h2 class="entry-title">Artsy&#8217;s Technology Stack, 2015</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p>Artsy has now grown past 100 team members and our Engineering organization is now 20 strong. For a brief overview of what the company has accomplished in the last two years, check out our <a href="http://2013.artsy.net">2013</a> and <a href="http://2014.artsy.net">2014</a> reviews.</p>
+
+<p>This is a good opportunity to describe our updated technology stack. Last time <a href="/blog/2012/10/10/artsy-technology-stack">we did this</a> was when Artsy launched publicly in 2012.</p>
+
+<center><img src='/images/2015-03-23-artsy-technology-stack-2015/stats.png'></center>
+
+
+<p>Three years ago Artsy was a classic <a href="http://rubyonrails.org">Ruby-on-Rails</a> monolith with a handful of adjacent processes and tools. We&#8217;ve since broken it up into many independent services, and continue to heavily be a Ruby and JavaScript shop, using Rails where appropriate, with native code on mobile devices and some JVM-based experiments in micro-services.</p>
+
+<center><img src='/images/2015-03-23-artsy-technology-stack-2015/languages.png'></center>
+
+
+
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2015/03/23/artsy-technology-stack-2015/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2015-03-23T00:00:00+00:00" pubdate>Mar. 23<span>rd</span>, 2015</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2015/01/21/cocoapods-keys-and-CI/">
+        
+        
+          <h2 class="entry-title">CocoaPods-Keys and CI</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p>We built CocoaPods-Keys as a way to remove API keys and secrets from our source code. We use it to open up our code to the pubic, without leaking private details. One of the cool things about doing it this way was that we could all use different API keys stashed away in each developers Keychain.</p>
+
+<p>To ensure we could run CI on our apps we came up with two different ways to use keys on CI. This post explains them both.</p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2015/01/21/cocoapods-keys-and-CI/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2015-01-21T16:43:00+00:00" pubdate>Jan. 21<span>st</span>, 2015</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2015/01/04/cocoapods-and-frameworks/">
+        
+        
+          <h2 class="entry-title">CocoaPods and Frameworks</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p>As I mentioned in my <a href="https://artsy.github.io/blog/2014/11/13/eidolon-retrospective/">retrospective on Eidolon</a>, Artsy iOS codebases are often used as testbeds for new CocoaPods features. With Eidolon, we had the opportunity to try out CocoaPods&#8217; support for frameworks and Swift. This post is a look back at the month of using dependencies as dynamic frameworks instead of static libraries.</p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2015/01/04/cocoapods-and-frameworks/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2015-01-04T16:43:00+00:00" pubdate>Jan. 4<span>th</span>, 2015</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
   
   <div class="pagination">
     
-      <a class="prev" href="/blog/page/2/">&larr; Older</a>
+    <a href="/blog/page/2/">Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
   </div>
 </div>
-    </div>
-    <div id="sidebar">
-      
-  
-    <section>
-  <h1>Info</h1>
-  <ul>
-    <li> <a href="/about">About Us</a></li>
-    <li> <a href="/open-source">Artsy Open-Source</a></li>
-    <li> <a href="http://artsy.net/job/developer">Join the Artsy Engineering Team</a></li>
-  </ul>
-</section>
-<section id="recent_posts_section">
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2013/11/30/rendering-on-the-server-and-client-in-node-dot-js/">Rendering on the Server and Client in Node.js</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/11/07/upgrading-to-mongoid4/">Upgrading to Mongoid 4.x</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/08/27/introduction-to-aws-opsworks/">Introduction to AWS OpsWorks</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/23/normalizing-gmail-email-addresses-with-canonical-emails/">Normalizing GMail E-Mail Addresses with CanonicalEmails</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/21/adding-api-documentation-with-grape-swagger/">Adding API Docs with Grape and Swagger</a>
-      </li>
-    
-  </ul>
-  <a class="archive_link" href="/blog/archives">Blog Archive</a>
-</section>
-<section>
-  <h1>Search</h1>
-  <form action="http://google.com/search" method="get">
-    <input type="hidden" name="q" value="site:artsy.github.io" />
-    <input class="search" type="text" name="q" results="0" />
-  </form>
-</section>
-  
 
 
     </div>
   </div>
-  <footer id="main_footer"><p>
-  Copyright &copy; 2014 - Artsy -
+  <footer id="main_footer"><!-- <p>
+  Copyright &copy; 2015 - Artsy -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
+ -->
+
+ <div class="footer-navigation">
+  <ul>
+    <li><a href="https://developers.artsy.net/">API</a></li>
+    <li><a href="https://www.artsy.net/jobs">Careers</a></li>
+    <li><a href="http://twitter.com/artsyopensource">@artsyopensource</a></li>
+    <li><a href="http://www.artsy.net/">Artsy.net</a></li>
+  </ul>
 
 </footer>
   
@@ -665,6 +735,37 @@
 
 
 
+
+<script type="text/javascript">
+  $(function() {
+
+    // Main sticky header
+    if ($(window).width() >= 700) {
+      var sticky = new Waypoint.Sticky({
+        element: $("#banner"),
+        offset: -100
+      });
+    }
+
+    // Toggle hamburger menu
+    $('.header-hamburger').click(function() {
+      $('#banner, .cmn-toggle-switch').toggleClass('active');
+      if (location.pathname == '/open-source') {
+        $('.header-search span').hide();
+        $('#page-sidebar').toggle();
+      }
+    });
+
+    // Toggle search focus on mobile
+    $('input.search').focus(function() {
+      $('#header').addClass('search-focused');
+    }).blur(function() {
+      $('#header').removeClass('search-focused');
+    });
+
+    
+  });
+</script>
 
 
 </body>

@@ -9,7 +9,7 @@
   <meta name="author" content="Artsy">
 
   
-  <meta name="description" content="Empathy with end users is critical when developing consumer-facing software. Many go even further and argue that you should be your own user to &hellip;">
+  <meta name="description" content="When dealing with rendering data for an email, one frequently has to make many database calls to assemble the required data. This can be slow, and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -23,11 +23,27 @@
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <script src="/javascripts/octopress.js"></script>
+  <script src="/javascripts/underscore-min.js"></script>
+  <script src="/javascripts/jquery-1.11.3.min.js"> </script>
+  <script src="/javascripts/jquery.scrollTo.min.js"></script>
+  <script src="/javascripts/backbone-min.js"></script>
+  <script src="/javascripts/moment.js"></script>
+  <script src="/javascripts/noframework.waypoints.min.js"></script>
+  <script src="/javascripts/gradient_fade.js"></script>
+  <script src="/javascripts/sticky.min.js"></script>
+  <script type="text/javascript" src="http://fast.fonts.net/jsapi/f7f47a40-b25b-44ee-9f9c-cfdfc8bb2741.js"></script>
+  
   <link href="/atom.xml" rel="alternate" title="Artsy Engineering" type="application/atom+xml">
   <!--[if IE 8]>
 <link href="/stylesheets/custom/ie_font.css" type="text/css">
 <![endif]-->
+
+<!--- MathJax Configuration -->
+<script type="text/javascript"
+src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -46,735 +62,640 @@
 
 
 <body>
-  
-  <a href="/">
-    <h1 id="lrg-mark">
-      <span>Artsy</span>
-    </h1>
-  </a>
-  
-  <header id="banner"><hgroup>
-  <div id="header">
-    <h2>Inspiration from the engineering team at <a href="http://artsy.net">Artsy</a> — A new way to discover fine art.</h2>
-  </div>
-</hgroup>
-
-</header>
-  
-  <div id="main">
-    <div id="mobile_search">
-      <form action="http://google.com/search" method="get">
-        <input type="hidden" name="q" value="site:artsy.github.io" />
-        <input class="search" type="text" name="q" results="0" placeholder="Search" />
-      </form>
+  <div id="logo-container">
+    <div id="lrg-mark">
+      <a href="https://www.artsy.net/"><img src="/images/fixed_logo.png"></a>
     </div>
+  </div>
+  <header id="banner"><div id="header">
+  <div class="header-navigation">
+    <ul>
+      <li><a href="https://developers.artsy.net/">API</a></li>
+      <li><a href="https://www.artsy.net/jobs">Careers</a></li>
+      <li><a href="http://twitter.com/artsyopensource">@artsyopensource</a></li>
+      <li><a href="http://www.artsy.net/">Artsy.net</a></li>
+    </ul>
+    <span class="header-section-title">
+      
+        <a href="http://artsy.github.io/open-source">Open Source</a>
+      
+    </span>
+  </div>
+
+  <div class="header-sticky-container">
+    <div class="header-logo">
+      <h2><a href="http://artsy.github.io">Artsy</a></h2>
+    </div>
+    <div class="header-search">
+      
+        <h2>Engineering Blog</h2>
+        <span>
+  <form action="/search" method="get">
+    <input type="hidden" value="010245880960712892902:tnjd4ryb3ci" name="cx"/>
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </form>
+
+</span>
+      
+    </div>
+  </div>
+</div>
+</header>
+  <div class="header-hamburger">
+    <button class="cmn-toggle-switch cmn-toggle-switch__htx">
+      <span>toggle menu</span>
+    </button>
+  </div>
+  <div id="main">
     <div id="content">
+
       <div class="blog-index">
   
   
-  
-    <article>
-      
-  <header>
     
-    <a href="/blog/2012/07/05/spend-time-with-your-site/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2012-07-05T10:51:00+01:00" pubdate>07/05/12</time></div>
-    
-    
-      <h1 class="entry-title">Spend Time With Your Site</h1>
-
-    
-    </a>
-    
-      <p class="meta">
+      <article>
         
-      </p>
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2014/03/18/presenters-and-memoization-moving-logic-out-of-templates/">
+        
+        
+          <h2 class="entry-title">Presenters and Memoization: Moving Logic Out of Templates</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
     
-  </header>
+      <div class="entry-content"><p>When dealing with rendering data for an email, one frequently has to make many database calls to assemble the required data. This can be slow, and depending on how you structure the code that is assembling the data vs rendering the data in a template, it&#8217;s very easy to be making repeated calls, which can significantly slow down your process. Additionally, whether you are using <a href="http://haml.info/">Haml</a>, <a href="http://mustache.github.io/">Mustache</a>, <a href="http://jade-lang.com/">Jade</a>, or any other templating language, embedding too much logic in the template can making things hard to maintain (especially if some logic lives in the template and some elsewhere in your domain code). Of course some logic in the template (a conditional: should I render this section?, or loops: render this hash of data) is necessary, but I like to keep as much out of there as possible. It&#8217;s easier to optimize, debug and maintain that logic elsewhere, and also writing complex logic in <a href="https://www.ruby-lang.org">Ruby</a> is much more fun than in a templating language!</p>
 
-
-  <div class="entry-content"><p>Empathy with end users is critical when developing consumer-facing software. Many go <a href="http://innonate.com/2011/03/09/hackers-the-canon-of-consumer-facing-products/">even</a> <a href="http://www.uie.com/articles/self_design/">further</a> and argue that you should <em>be</em> your own user to effectively deliver the best experience.</p>
-
-<blockquote><p><em>I&#8217;d encourage anyone starting a startup to become one of its users, however unnatural it seems.</em></p>
-
-<p>&mdash; Paul Graham <a href="http://paulgraham.com/organic.html">Organic Startup Ideas</a></p></blockquote>
-
-<p>In practice, though, this can be difficult:</p>
-
-<ul>
-<li>As a developer, you&#8217;re just not representative of the intended audience.</li>
-<li>You&#8217;re [appropriately] focused on the product&#8217;s next iteration, while your audience is occupied with the current state.</li>
-<li>You spend countless hours focused on product details&mdash;of course it&#8217;s a challenge to empathize with a casual visitor&#8217;s first impression.</li>
-</ul>
-
-
-<h2>Keeping it Real</h2>
-
-<p>We&#8217;ve tried some best practices to overcome these tendencies. User feedback is emailed to everyone in the company. Engineers share customer support responsibilities. But one simple tool has been surprisingly useful: we stole a page from the agile development handbook and built an <a href="http://alistair.cockburn.us/Information+radiator">information radiator</a>. Like a <a href="http://en.wikipedia.org/wiki/Kanban_board">kanban board</a>, news ticker, or <a href="https://demo.geckoboard.com/dashboard/B6782E562794C2F2/">analytics wall board</a>, our information radiator gives us an ambient awareness of end users&#8217; experiences. How?</p>
+<p>In this article I&#8217;ll present what I&#8217;ve been doing to keep my templates relatively logic-free, and how I make sure I don&#8217;t repeat any heavy database calls in assembling my data.</p>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/07/05/spend-time-with-your-site/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
+      
+        <footer>
+          <a rel="full-article" href="/blog/2014/03/18/presenters-and-memoization-moving-logic-out-of-templates/">Read More</a>
+        </footer>
+      
     
-    <a href="/blog/2012/06/25/replacing-hashbang-routes-with-pushstate/">
-      <div class="date">
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
 
 
 
 
   
-<time datetime="2012-06-25T11:35:00+01:00" pubdate>06/25/12</time></div>
-    
-    
-      <h1 class="entry-title">Replacing #! Routes With PushState Using Backbone.js</h1>
+<time datetime="2014-03-18T17:27:00+00:00" pubdate>Mar. 18<span>th</span>, 2014</time></div>
+  </div>
 
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
     
-    </a>
-    
-      <p class="meta">
+      <article>
         
-      </p>
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2014/03/17/ruby-helper-to-group-artworks-into-a-pinterest-style-layout-for-email/">
+        
+        
+          <h2 class="entry-title">Ruby Helper to Group Artworks Into a Pinterest-style Layout for Email</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
     
-  </header>
+      <div class="entry-content"><p><img src="/images/2014-03-17-ruby-helper-to-group-artworks-into-a-pinterest-style-layout-for-email/two-column-layout.png" alt="Example of two column layout" /></p>
+
+<p>Something we&#8217;d like to do is email our users some suggested artworks as part of their personalized emails. The layout of those suggestions should look something like our newly re-designed <a href="https://artsy.net/browse/artworks?price_range=-1%3A1000000000000">Browse</a> page, with a &#8216;salon&#8217; style layout. Here&#8217;s some simple Ruby code that can group artworks into columns for you, that can then be directly rendered in an email (via <a href="http://haml.info/">Haml</a>, <a href="http://mustache.github.io/">Mustache</a>, <a href="http://jade-lang.com/">Jade</a>, or your templating language of choice.)</p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2014/03/17/ruby-helper-to-group-artworks-into-a-pinterest-style-layout-for-email/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
 
 
-  <div class="entry-content"><blockquote><p>The only constant is change, continuing change, inevitable change, that is the dominant factor in society
-[and web apps!] today. No sensible decision can be made any longer without taking into account not only
-the world as it is, but the world as it will be.</p>
 
-<p>&ndash; Isaac Asimov</p></blockquote>
 
-<h2>R.I.P #!</h2>
+  
+<time datetime="2014-03-17T19:32:00+00:00" pubdate>Mar. 17<span>th</span>, 2014</time></div>
+  </div>
 
-<p>It did not take us long to discover we shared the concerns of Twitter&#8217;s
-<a href="http://danwebb.net/2011/5/28/it-is-about-the-hashbangs">Dan Webb on hashbang routes</a>,
-but it was almost a year before we were able to remove them from Artsy. Here&#8217;s how it went down.</p>
+  <footer>
+  </footer>
 
-<p>Artsy relies on the <a href="http://documentcloud.github.com/backbone/">Backbone.js</a> framework for our client application
-which offers a solid pushState routing scheme. This includes a seamless hashtag fallback for
-<a href="http://caniuse.com/#feat=history">browsers that don&#8217;t support the HTML5 History API</a> (looking at you IE 9).</p>
+</div>
 
-<p>The pushState routing is optional, but <em>&#8220;the world as it should be&#8221;</em> suggests we say &#8220;Yes!&#8221; (or true) to pushState.</p>
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2014/03/17/some-tips-for-email-layout-and-responsiveness/">
+        
+        
+          <h2 class="entry-title">Some Tips for Email Layout and Responsiveness</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p><img src="/images/2014-03-17-some-tips-for-email-layout-and-responsiveness/analytics.png" alt="Example of Analytics Email" /></p>
+
+<p>Email can be one of the most powerful ways to engage with your users, and can serve a multitude of purposes. It can be used as a way to highlight selected content (weekly/monthly newsletters, &#8216;year in review&#8217;, etc.), provide a service to users (analytics breakdown of visits to your profile/favorites page), or re-engage with users (new feature announcements, etc.). Here at Artsy we use all of these kinds of emails and have found them to be a very valuable asset. However, best practices for template layout and CSS (keeping in mind the variety of devices and screen sizes that your users have) are quite different from, and very far behind, the current HTML5 standards and practices for making beautiful web pages. In this article, I&#8217;d like to present some techniques I&#8217;ve successfully used at Artsy to create emails that look good on your browser or mobile device, in some of the most popular email clients out there.</p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2014/03/17/some-tips-for-email-layout-and-responsiveness/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2014-03-17T12:36:00+00:00" pubdate>Mar. 17<span>th</span>, 2014</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2014/03/17/detecting-trends-with-forgetsy/">
+        
+        
+          <h2 class="entry-title">Detecting Trends Using Forgetsy</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p><img src="/images/2014-03-17-detecting-trends-with-forgetsy/monolith.jpg" alt="Armory Trending Screen" /></p>
+
+<p>As part of our partnership with <a href="https://www.thearmoryshow.com/">The New York Armory Show</a> this year, we installed a number of terminals throughout the fair. These screens used our own real-time data to display an ever shifting set of trending artworks, artists, and booths, to the attendees.</p>
+
+<p>Out of this work, we&#8217;ve open-sourced <a href="https://github.com/cavvia/forgetsy">Forgetsy</a>, a lightweight Ruby trending library. Put simply, Forgetsy implements data structures that forget. Loosely based on Bit.ly&#8217;s <a href="http://word.bitly.com/post/41284219720/forget-table">Forget Table</a> concept, Forgetsy uses decaying counters to track temporal trends in categorical distributions.</p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2014/03/17/detecting-trends-with-forgetsy/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2014-03-17T11:32:00+00:00" pubdate>Mar. 17<span>th</span>, 2014</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2014/01/30/isolating-spurious-and-nondeterministic-tests/">
+        
+        
+          <h2 class="entry-title">Isolating Spurious and Nondeterministic Tests</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p>Testing is a critical part of our workflow at <a href="https://artsy.net">Artsy</a>. It gives us confidence to make regular, aggressive enhancements. But anyone who has worked with a large, complex test suite has struggled with occasional failures that are difficult to reproduce or fix.</p>
+
+<p>These failures might be due to slight timing differences or lack of proper isolation between tests. Integration tests are particularly thorny, since problems can originate not only in application code, but in the browser, testing tools (e.g., <a href="http://docs.seleniumhq.org/">Selenium</a>), database, network, or external APIs and dependencies.</p>
+
+<h2>The Quarantine</h2>
+
+<p>We&#8217;ve been <a href="http://artsy.github.io/blog/2012/05/15/how-to-organize-over-3000-rspec-specs-and-retry-test-failures/">automatically retrying failed tests</a>, with some success. However, these problems tend to get worse. (If you have 10 tests that each have a 1% chance of failing, roughly 1 in 10 builds will fail. If you have 50, 4 in 10 builds will fail.)</p>
+
+<p>Martin Fowler offers the most compelling thoughts on this topic in <a href="http://martinfowler.com/articles/nonDeterminism.html">Eradicating Non-Determinism in Tests</a>. (Read it, really.) He suggests quarantining problematic tests in a separate suite, so they don&#8217;t block the build pipeline.</p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2014/01/30/isolating-spurious-and-nondeterministic-tests/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2014-01-30T14:42:00+00:00" pubdate>Jan. 30<span>th</span>, 2014</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2013/11/30/rendering-on-the-server-and-client-in-node-dot-js/">
+        
+        
+          <h2 class="entry-title">Rendering on the Server and Client in Node.js</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p><img src="/images/2013-12-18-rendering-on-the-server-and-client-in-node-dot-js/isomorphic.png" alt="Diagram of Shared Server/Client Architecture" /></p>
+
+<p>At Artsy we&#8217;ve been building <a href="http://nodejs.org/">Node.js</a> applications that share code and rendering between the server and browser. We&#8217;ve seen many benefits from this &#8211; pages load faster, we can optimize SEO, developers are more productive, and JavaScript coding is just an overall better experience.</p>
+
+<p>Today we&#8217;re happy to announce <a href="http://ezeljs.com/">Ezel</a>, our open source boilerplate we use to bootstrap our Node projects and the <a href="https://github.com/artsy/benv">various</a> <a href="https://github.com/artsy/backbone-super-sync">node</a> <a href="https://github.com/artsy/sharify">modules</a> that built up to it.</p>
+
+<p>In his article, <a href="http://nerds.airbnb.com/isomorphic-JavaScript-future-web-apps/"><em>Isomorphic JavaScript: The Future of Web Apps</em></a>, Spike Brehm from AirBnB describes this growing trend well and we&#8217;re excited to be a part of it. In this article I&#8217;ll tell Artsy&#8217;s story of moving from a single monolithic application to modular <a href="http://backbonejs.org/">Backbone</a> apps that run in Node and the browser and consume our external API.</p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2013/11/30/rendering-on-the-server-and-client-in-node-dot-js/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2013-11-30T22:38:00+00:00" pubdate>Nov. 30<span>th</span>, 2013</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
+  
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2013/11/07/upgrading-to-mongoid4/">
+        
+        
+          <h2 class="entry-title">Upgrading to Mongoid 4.x</h2>
+        
+          </a>
+      </header>
+    </div>
+  
+
+  <div class="content-container">
+    
+      <div class="entry-content"><p>I recently went through an exercise of upgrading one of Artsy&#8217;s largest web projects to the current HEAD of Mongoid 4.x. This is going to be a major release with numerous changes and I wanted to flush out bugs before the final version of the ODM is released. All Mongoid changes currently live on <a href="https://github.com/mongoid/mongoid">master</a>.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">({</span> <span class="nv">pushState: </span><span class="kc">true</span> <span class="p">})</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">gem</span> <span class="s1">&#39;mongoid&#39;</span><span class="p">,</span> <span class="ss">github</span><span class="p">:</span> <span class="s1">&#39;mongoid/mongoid&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-
+<p>In the process I&#8217;ve worked on making a few gems compatible with Mongoid 4 and learned a couple of things that should help you make this process smooth for your own applications.</p>
 
 </div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/06/25/replacing-hashbang-routes-with-pushstate/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-    <a href="/blog/2012/05/30/restful-api-caching-with-garner/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2012-05-30T21:21:00+01:00" pubdate>05/30/12</time></div>
-    
-    
-      <h1 class="entry-title">RESTful API Caching With Garner</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Implementing server-side RESTful API caching is hard. In a straightforward API all the expiry decisions can be made automatically based on the URL, but most real world APIs that add requirements around object relationships or user authorization make caching particularly challenging.</p>
-
-<p>At <a href="http://goruco.com/">GoRuCo</a> we open-sourced <a href="http://github.com/artsy/garner">Garner</a>, a cache implementation of the concepts described in this post. To &#8220;garner&#8221; means to gather data from various sources and to make it readily available in one place, kind-of like a cache! Garner works today with the <a href="http://github.com/intridea/grape">Grape API framework</a> and the <a href="http://github.com/mongoid/mongoid">Mongoid ODM</a>. We encourage you to fork the project, extend our library to other systems and contribute your code back, if you find it useful.</p>
-
-<p>Garner implements the Artsy API caching cookbook that has been tried by fire in production.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/05/30/restful-api-caching-with-garner/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-    <a href="/blog/2012/05/27/using-jenkins-for-ruby-and-ruby-on-rails-teams/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2012-05-27T08:15:00+01:00" pubdate>05/27/12</time></div>
-    
-    
-      <h1 class="entry-title">Using Jenkins for Ruby and Ruby-on-Rails Teams</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>The <a href="http://jenkins-ci.org">Jenkins CI</a> project has grown tremendously in the past few months. There&#8217;re now hundreds of plugins and an amazing engaged community. Artsy is a happy user and proud contributor to this effort with the essential <a href="https://wiki.jenkins-ci.org/display/JENKINS/AnsiColor+Plugin">jenkins-ansicolor plugin</a>, eliminating boring console output since 2011.</p>
-
-<p>We are a continuous integration, deployment and devops shop and have been using Jenkins for over a year now. We&#8217;ve shared our experience at the <a href="http://www.cloudbees.com/juc2012.cb">Jenkins User Conference 2012</a> in <a href="http://www.slideshare.net/dblockdotorg/graduating-to-jenkins-ci-for-rubyonrails-teams">a presentation</a>. This blog post is an overview of how to get started with Jenkins for Ruby(-on-Rails) teams.</p>
-
-<p><img src="/images/2012-05-27-using-jenkins-for-ruby-on-rails-teams/jenkins.png" title="[Artsy Jenkins CI]" ></p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/05/27/using-jenkins-for-ruby-and-ruby-on-rails-teams/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+        <footer>
+          <a rel="full-article" href="/blog/2013/11/07/upgrading-to-mongoid4/">Read More</a>
+        </footer>
       
-  <header>
     
-    <a href="/blog/2012/05/16/generating-automatic-plain-text-mime-parts-with-rails-actionmailer/">
-      <div class="date">
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
 
 
 
 
   
-<time datetime="2012-05-16T20:52:00+01:00" pubdate>05/16/12</time></div>
-    
-    
-      <h1 class="entry-title">Generating Automatic Plain Text MIME Parts With Rails ActionMailer</h1>
+<time datetime="2013-11-07T12:34:00+00:00" pubdate>Nov. 7<span>th</span>, 2013</time></div>
+  </div>
 
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>E-mail is one of the most important ways to engage your users. And every time you touch a user&#8217;s inbox, it reflects on your brand. But getting email right has become increasing difficult due to the complexities introduced by the thousands of web-based, desktop and mobile mail clients. Email formatting is like the &#8220;Hunger Games&#8221; where the major players include online services such as GMail, Yahoo, Hotmail or AOL, desktop clients such as Outlook and a myriad mobile devices ranging from iPhone and Android to Blackberry.</p>
-
-<p>To deal with this landscape, the MIME standard allows systems to send e-mail with multiple parts: <code>plain/text</code> for business-efficient devices such as the Blackberry, and <code>text/html</code> for web-based e-mail readers, such as GMail. Furthermore, <code>ActionMailer</code> supports multiple template formats: create an <code>.html.haml</code> template along with a <code>.txt.haml</code> template to generate both. We also know that <code>text/plain</code> email helps deliverability, but we believe a disproportionately small amount of text e-mails are actually read - the vast majority of devices are capable of parsing some HTML.</p>
-
-<p>Is it possible to avoid having to maintain two separate templates without sacrificing deliverability? How can we inject a <code>text/plain</code> part into HTML e-mail that is both useful and &#8220;free&#8221;?</p>
+  <footer>
+  </footer>
 
 </div>
+
+      </article>
   
+    
+      <article>
+        
+<div class="article-container">
+
   
-    <footer>
-      <a rel="full-article" href="/blog/2012/05/16/generating-automatic-plain-text-mime-parts-with-rails-actionmailer/">Read on &rarr;</a>
-    </footer>
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2013/08/27/introduction-to-aws-opsworks/">
+        
+        
+          <h2 class="entry-title">Introduction to AWS OpsWorks</h2>
+        
+          </a>
+      </header>
+    </div>
   
 
+  <div class="content-container">
+    
+      <div class="entry-content"><p>OpsWorks is a new service from Amazon that promises to provide high-level tools to manage your EC2-based deployment. From <a href="http://aws.typepad.com/aws/2013/02/aws-opsworks-flexible-application-management-in-the-cloud.html">the announcement</a>:</p>
 
-    </article>
-  
-  
-    <article>
+<blockquote><p>AWS OpsWorks features an integrated management experience for the entire application lifecycle including resource provisioning, configuration management, application deployment, monitoring, and access control. It will work with applications of any level of complexity and is independent of any particular architectural pattern.</p></blockquote>
+
+<p>After scratching our heads about exactly what that meant, we tried it anyway. If you&#8217;ve been straining at the limits of your Platform as a Service (PaaS) provider, or just wishing for more automation for your EC2 deployment, you may want to try it out too.</p>
+
+<p>Artsy has been experimenting with OpsWorks for a few months now and recently adopted it for the production <a href="http://artsy.net">artsy.net</a> site. We&#8217;re excited to share what we&#8217;ve learned in the process.</p>
+
+<p><img class="screenshot" src="/images/2013-08-27-introduction-to-aws-opsworks/opsworks.png" title="[OpsWorks overview]" ></p>
+
+</div>
       
-  <header>
-    
-    <a href="/blog/2012/05/15/how-to-organize-over-3000-rspec-specs-and-retry-test-failures/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2012-05-15T12:00:00+01:00" pubdate>05/15/12</time></div>
-    
-    
-      <h1 class="entry-title">How to Organize Over 3000 RSpec Specs and Retry Test Failures</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Having over three thousand RSpec tests in a single project has become difficult to manage. We chose to organize these into suites, somewhat mimicking our directory structure. And while we succeeded at making our Capybara integration tests more reliable (see <a href="/blog/2012/02/03/reliably-testing-asynchronous-ui-w-slash-rspec-and-capybara/">Reliably Testing Asynchronous UI with RSpec and Capybara</a>), they continue relying on finicky timeouts. To avoid too many false positives we&#8217;ve put together a system to retry failed tests. We know that a spec that fails twice in a row is definitely not a fluke!</p>
-
-<p>Create a new Rake file in <code>lib/tasks/test_suites.rake</code> and declare an array of test suites.</p>
-
-<figure class='code'><figcaption><span>lib/tasks/test_suites.rake</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="no">SPEC_SUITES</span> <span class="o">=</span> <span class="o">[</span>
-</span><span class='line'>    <span class="p">{</span> <span class="ss">:id</span> <span class="o">=&gt;</span> <span class="ss">:models</span><span class="p">,</span> <span class="ss">:pattern</span> <span class="o">=&gt;</span> <span class="s2">&quot;spec/models/**/*_spec.rb&quot;</span> <span class="p">},</span>
-</span><span class='line'>    <span class="p">{</span> <span class="ss">:id</span> <span class="o">=&gt;</span> <span class="ss">:controllers</span><span class="p">,</span> <span class="ss">:pattern</span> <span class="o">=&gt;</span> <span class="s2">&quot;spec/controllers/**/*_spec.rb&quot;</span> <span class="p">},</span>
-</span><span class='line'>    <span class="p">{</span> <span class="ss">:id</span> <span class="o">=&gt;</span> <span class="ss">:views</span><span class="p">,</span> <span class="ss">:pattern</span> <span class="o">=&gt;</span> <span class="s2">&quot;spec/views/**/*_spec.rb&quot;</span> <span class="p">}</span>
-</span><span class='line'>  <span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/05/15/how-to-organize-over-3000-rspec-specs-and-retry-test-failures/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-    <a href="/blog/2012/05/11/on-making-it-personal--in-iOS-with-searchbars/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2012-05-11T20:52:00+01:00" pubdate>05/11/12</time></div>
-    
-    
-      <h1 class="entry-title">On Making It Personal in iOS With Searchbars</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>We make Folio, a pretty kick-ass iPad app that we give away to our partners to showcase their inventory at art fairs. Whilst making it we tried to ensure that all of the application fits in with the <a href="http://artsy.net">Artsy</a> website aesthetic, and recently the last natively styled control fell to our mighty code hammers. That was the <code>UISearchBar</code>.</p>
-
-<p><img src="http://ortastuff.s3.amazonaws.com/images/custom_searchbar_example.jpg" alt="Screenshot of Artsy Folio" /></p>
-
-<p>When displaying only search results in a table it makes a lot of sense to use Apple&#8217;s <code>UISearchDisplayController</code> as it handles a lot of edge cases for you. However the downside is that you lose some control over how the views interact.</p>
-
-<p>The search bar was the only native control that actually made it into the version 1 release. This was mainly due to it requiring a bit of black magic in order to get it to work the way we wanted. So lets go through the code and rip it to pieces.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/05/11/on-making-it-personal--in-iOS-with-searchbars/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
-  
-    <article>
+        <footer>
+          <a rel="full-article" href="/blog/2013/08/27/introduction-to-aws-opsworks/">Read More</a>
+        </footer>
       
-  <header>
     
-    <a href="/blog/2012/05/01/how-to-start-small-with-big-data-and-google-analytics/">
-      <div class="date">
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
 
 
 
 
   
-<time datetime="2012-05-01T20:52:00+01:00" pubdate>05/01/12</time></div>
-    
-    
-      <h1 class="entry-title">How to Start Small With Big Data and Google Analytics</h1>
+<time datetime="2013-08-27T12:31:00+01:00" pubdate>Aug. 27<span>th</span>, 2013</time></div>
+  </div>
 
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Why do so many companies write a homegrown pageviews tracking system? Between Google Analytics, Kissmetrics and many others, isn&#8217;t that a completely solved problem?</p>
-
-<p>These popular solutions lack domain knowledge. They are easily capable of segmenting users by region or browser, but they fail to recognize rules core to your business. Tracking pageviews with a homegrown system becomes your next sprint&#8217;s goal.</p>
-
-<p>Implementing a hit counter service is quite tricky. This is a write-heavy, asynchronous problem that must minimize impact on page rendering time, while dealing with rapidly growing amounts of data. Is there a middle ground between using Google Analytics and rolling out our own homegrown implementation? How can we use Google Analytics for data collection and inject domain knowledge into gathered data, incrementally, without writing our own service?</p>
+  <footer>
+  </footer>
 
 </div>
+
+      </article>
   
+    
+      <article>
+        
+<div class="article-container">
+
   
-    <footer>
-      <a rel="full-article" href="/blog/2012/05/01/how-to-start-small-with-big-data-and-google-analytics/">Read on &rarr;</a>
-    </footer>
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2013/06/23/normalizing-gmail-email-addresses-with-canonical-emails/">
+        
+        
+          <h2 class="entry-title">Normalizing GMail E-Mail Addresses With CanonicalEmails</h2>
+        
+          </a>
+      </header>
+    </div>
   
 
+  <div class="content-container">
+    
+      <div class="entry-content"><p>A whopping 49% of Artsy users have &#8220;gmail.com&#8221; email addresses. The next domain name, &#8220;hotmail.com&#8221;, doesn&#8217;t even come close, with only 6%.</p>
 
-    </article>
-  
-  
-    <article>
+<p><img src="/images/2013-06-23-normalizing-gmail-email-addresses-with-canonical-emails/artsy-email-domains.png" /></p>
+
+<p>GMail addresses ignore periods and are case-insensitive. For example, &#8220;Donald.Duck@gmail.com&#8221; and &#8220;donaldduck@gmail.com&#8221; are the same account. You can log-in to GMail with both. Users often register with the former and try to log-in to Artsy with the latter. With so many GMail users, expect a dozen support emails per day.</p>
+
+<p>The solution is to normalize these emails into a canonical form.</p>
+
+</div>
       
-  <header>
-    
-    <a href="/blog/2012/04/10/css-trick-adjusting-text-underlines/">
-      <div class="date">
-
-
-
-
-  
-<time datetime="2012-04-10T16:32:00+01:00" pubdate>04/10/12</time></div>
-    
-    
-      <h1 class="entry-title">CSS Trick: Adjusting Text Underlines</h1>
-
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Often times people will use <em>border-bottom: 1px solid</em> in favor of <em>text-decoration: underline</em> to give their links some breathing room. But what if you&#8217;re giving it <em>too</em> much breathing room and want to adjust the height of that underline. With Adobe Garamond that happened to be the case, so we&#8217;ve come up with this little css trick:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nt">a</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="o">-</span><span class="k">block</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">position</span><span class="o">:</span> <span class="k">relative</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="nt">a</span><span class="o">:</span><span class="nd">:after</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="o">-</span><span class="k">block</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">height</span><span class="o">:</span> <span class="m">1em</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">width</span><span class="o">:</span> <span class="m">100</span><span class="o">%</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">border-bottom</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">margin-top</span><span class="o">:</span> <span class="m">5px</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>This overlays a CSS pseudo element with a border-bottom that can be adjusted by changing margin-top.</p>
-
-<p>For handling browsers that don&#8217;t support pseudo elements I recommend targeting them with the <a href="http://paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/">Paul Irish class-on-html-trick</a>.</p>
-
-<p>Let your links breathe!</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
+        <footer>
+          <a rel="full-article" href="/blog/2013/06/23/normalizing-gmail-email-addresses-with-canonical-emails/">Read More</a>
+        </footer>
+      
     
-    <a href="/blog/2012/03/23/simplifying-model-level-json-versioning-with-mongoid-cached-json/">
-      <div class="date">
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
 
 
 
 
   
-<time datetime="2012-03-23T09:14:00+00:00" pubdate>03/23/12</time></div>
-    
-    
-      <h1 class="entry-title">Simplifying Model-Level JSON Versioning With Mongoid-Cached-Json</h1>
+<time datetime="2013-06-23T12:21:00+01:00" pubdate>Jun. 23<span>rd</span>, 2013</time></div>
+  </div>
 
-    
-    </a>
-    
-      <p class="meta">
-        
-      </p>
-    
-  </header>
+  <footer>
+  </footer>
 
-
-  <div class="entry-content"><p>Did you know that Netflix has hundreds of API versions, one for each device? Daniel Jacobson&#8217;s <a href="http://www.slideshare.net/danieljacobson/techniques-for-scaling-the-netflix-api-qcon-sf">Techniques for Scaling the Netflix API</a> at QConSF 2011 explained why they chose this model. And while we don&#8217;t all build distributed services that supply custom-tailored data to thousands of heterogeneous TVs and set-top boxes, we do have to pay close attention to API versioning from day one.</p>
-
-<p>Versioning is hard. Your data models evolve, but you must maintain backward-compatibility for your public interfaces. While many strategies exist to deal with this problem, we&#8217;d like to propose one that requires very little programming effort and that is more declarative in nature.</p>
-
-<p>At Artsy we use <a href="http://github.com/intridea/grape">Grape</a> and implement the &#8220;path&#8221; versioning strategy from the <a href="http://github.com/intridea/grape/tree/frontier">frontier</a> branch. Our initial v1 API is consumed by our own website and services and lives at <a href="https://artsyapi.com/api/v1">https://artsyapi.com/api/v1</a>. We&#8217;ve also prototyped v2 and by the time v1 is frozen, it should already be in production.</p>
-
-<p>Grape takes care of version-based routing and has a system that lets you split version-based presentation of a model from the model implementation. I find that separation forcefully induced by unnecessary implementation complexity around wanting to return different JSON depending on the API version requested. What if implementing versioning in <code>as_json</code> were super simple?</p>
-
-<p>Consider a Person model returned from a v1 API.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">API</span> <span class="o">&lt;</span> <span class="no">Grape</span><span class="o">::</span><span class="no">API</span>
-</span><span class='line'>  <span class="n">prefix</span> <span class="ss">:api</span>
-</span><span class='line'>  <span class="n">version</span> <span class="ss">:v1</span>
-</span><span class='line'>  <span class="n">namespace</span> <span class="ss">:person</span>
-</span><span class='line'>    <span class="n">get</span> <span class="s2">&quot;:id&quot;</span>
-</span><span class='line'>      <span class="no">Person</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">as_json</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Person</span>
-</span><span class='line'>  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">Document</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">field</span> <span class="ss">:name</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">as_json</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>      <span class="nb">name</span><span class="p">:</span> <span class="nb">name</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>In v2 the model split <code>:name</code> into a <code>:first</code> and <code>:last</code> name and in v3 <code>:name</code> has finally been deprecated. A version v3 Person model would look as follows.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Person</span>
-</span><span class='line'>  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">Document</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">field</span> <span class="ss">:first</span>
-</span><span class='line'>  <span class="n">field</span> <span class="ss">:last</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">as_json</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>      <span class="n">first</span><span class="p">:</span> <span class="n">first</span><span class="p">,</span>
-</span><span class='line'>      <span class="n">last</span><span class="p">:</span> <span class="n">last</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>How can we combine these two implementations and write <code>Person.find(params[:id]).as_json({ :version =&gt; ? })</code>?</p>
-
-<p>In <a href="http://github.com/dblock/mongoid-cached-json">mongoid-cached-json</a> we&#8217;ve introduced a declarative way of versioning JSON. Here&#8217;s the code for Person v3.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Person</span>
-</span><span class='line'>  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">Document</span>
-</span><span class='line'>  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">CachedJson</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">field</span> <span class="ss">:first</span>
-</span><span class='line'>  <span class="n">field</span> <span class="ss">:last</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">name</span>
-</span><span class='line'>    <span class="o">[</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span> <span class="o">].</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">json_fields</span> <span class="p">\</span>
-</span><span class='line'>    <span class="nb">name</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:versions</span> <span class="o">=&gt;</span> <span class="o">[</span> <span class="ss">:v1</span><span class="p">,</span> <span class="ss">:v2</span> <span class="o">]</span> <span class="p">},</span>
-</span><span class='line'>    <span class="n">first</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:versions</span> <span class="o">=&gt;</span> <span class="o">[</span> <span class="ss">:v2</span><span class="p">,</span> <span class="ss">:v3</span> <span class="o">]</span> <span class="p">},</span>
-</span><span class='line'>    <span class="n">last</span><span class="p">:</span> <span class="p">{</span> <span class="ss">:versions</span> <span class="o">=&gt;</span> <span class="o">[</span> <span class="ss">:v2</span><span class="p">,</span> <span class="ss">:v3</span> <span class="o">]</span> <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>With the <a href="http://github.com/dblock/mongoid-cached-json">mongoid-cached-json</a> gem you also get caching that respects JSON versioning, for free. Read about it <a href="http://artsy.github.com/blog/2012/02/20/caching-model-json-with-mongoid-cached-json/">here</a>.</p>
 </div>
+
+      </article>
   
+    
+      <article>
+        
+<div class="article-container">
+
+  
+    <div class="meta-container">
+      <header>
+        
+          <a href="/blog/2013/06/21/adding-api-documentation-with-grape-swagger/">
+        
+        
+          <h2 class="entry-title">Adding API Docs With Grape and Swagger</h2>
+        
+          </a>
+      </header>
+    </div>
   
 
+  <div class="content-container">
+    
+      <div class="entry-content"><p>The Artsy website, Partner CMS, mobile tools, and all our hackathon experiments are built on top of a core API. We&#8217;ve put a lot of effort into documenting it internally. But developers don&#8217;t want to have to grok through code. With <a href="https://github.com/intridea/grape">Grape</a> and <a href="https://developers.helloreverb.com/swagger">Swagger</a>, adding an API explorer and exposing the API documentation has never been easier.</p>
 
-    </article>
+<p><img src="/images/2013-06-21-adding-api-documentation-with-grape-swagger/swagger-ui.png" /></p>
+
+</div>
+      
+      
+        <footer>
+          <a rel="full-article" href="/blog/2013/06/21/adding-api-documentation-with-grape-swagger/">Read More</a>
+        </footer>
+      
+    
+    
+  </div>
+
+  <div class="date-container">
+    <div class="date">
+
+
+
+
+  
+<time datetime="2013-06-21T12:21:00+01:00" pubdate>Jun. 21<span>st</span>, 2013</time></div>
+  </div>
+
+  <footer>
+  </footer>
+
+</div>
+
+      </article>
   
   <div class="pagination">
     
-      <a class="prev" href="/blog/page/5/">&larr; Older</a>
+    <a href="/blog/page/5/">Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
-    <a class="next" href="/blog/page/3/">Newer &rarr;</a>
+    <a href="/blog/page/3/">Newer</a>
     
   </div>
 </div>
-    </div>
-    <div id="sidebar">
-      
-  
-    <section>
-  <h1>Info</h1>
-  <ul>
-    <li> <a href="/about">About Us</a></li>
-    <li> <a href="/open-source">Artsy Open-Source</a></li>
-    <li> <a href="http://artsy.net/job/developer">Join the Artsy Engineering Team</a></li>
-  </ul>
-</section>
-<section id="recent_posts_section">
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2013/11/30/rendering-on-the-server-and-client-in-node-dot-js/">Rendering on the Server and Client in Node.js</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/11/07/upgrading-to-mongoid4/">Upgrading to Mongoid 4.x</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/08/27/introduction-to-aws-opsworks/">Introduction to AWS OpsWorks</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/23/normalizing-gmail-email-addresses-with-canonical-emails/">Normalizing GMail E-Mail Addresses with CanonicalEmails</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/21/adding-api-documentation-with-grape-swagger/">Adding API Docs with Grape and Swagger</a>
-      </li>
-    
-  </ul>
-  <a class="archive_link" href="/blog/archives">Blog Archive</a>
-</section>
-<section>
-  <h1>Search</h1>
-  <form action="http://google.com/search" method="get">
-    <input type="hidden" name="q" value="site:artsy.github.io" />
-    <input class="search" type="text" name="q" results="0" />
-  </form>
-</section>
-  
 
 
     </div>
   </div>
-  <footer id="main_footer"><p>
-  Copyright &copy; 2014 - Artsy -
+  <footer id="main_footer"><!-- <p>
+  Copyright &copy; 2015 - Artsy -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
+ -->
+
+ <div class="footer-navigation">
+  <ul>
+    <li><a href="https://developers.artsy.net/">API</a></li>
+    <li><a href="https://www.artsy.net/jobs">Careers</a></li>
+    <li><a href="http://twitter.com/artsyopensource">@artsyopensource</a></li>
+    <li><a href="http://www.artsy.net/">Artsy.net</a></li>
+  </ul>
 
 </footer>
   
@@ -810,6 +731,37 @@ which offers a solid pushState routing scheme. This includes a seamless hashtag 
 
 
 
+
+<script type="text/javascript">
+  $(function() {
+
+    // Main sticky header
+    if ($(window).width() >= 700) {
+      var sticky = new Waypoint.Sticky({
+        element: $("#banner"),
+        offset: -100
+      });
+    }
+
+    // Toggle hamburger menu
+    $('.header-hamburger').click(function() {
+      $('#banner, .cmn-toggle-switch').toggleClass('active');
+      if (location.pathname == '/open-source') {
+        $('.header-search span').hide();
+        $('#page-sidebar').toggle();
+      }
+    });
+
+    // Toggle search focus on mobile
+    $('input.search').focus(function() {
+      $('#header').addClass('search-focused');
+    }).blur(function() {
+      $('#header').removeClass('search-focused');
+    });
+
+    
+  });
+</script>
 
 
 </body>
